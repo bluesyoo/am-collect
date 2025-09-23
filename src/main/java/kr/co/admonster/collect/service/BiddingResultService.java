@@ -42,6 +42,9 @@ public class BiddingResultService {
 				
 				.resultSt(resultMessage.getResultSt())
 				.resultDesc(resultMessage.getResultDesc())
+				
+				.compatitorsRank(resultMessage.getCompetitorRanks())
+				.timestamps(resultMessage.getTimestamps())
 				.build();
 				
 		this.openSearchService.upsert(IndexType.BIDDING_RESULT, osBiddingResult, OsBiddingResult.class);

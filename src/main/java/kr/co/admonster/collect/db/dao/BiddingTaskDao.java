@@ -16,21 +16,22 @@ public class BiddingTaskDao {
 	
 	public void updateBiddingResult(BiddingResultMessage resultMessage) {
 		String updateQuery = """
-				UPDATE tb_bidding
+				UPDATE tb_bidding_task
 				SET
-					PRICE_CUR = ?,
-					ORDER_CUR = ?,
-					RST_TP = ?,
-					RST_DTL = ?,
-					PREVIOUS_ERROR = ?,
-					INTEGRAL_ERROR = ?,
-					NEXT_TM = UNIX_TIMESTAMP() + 300
-				WHERE KEYWORD_ID = ?
+					current_rank = ?,
+					current_bid = ?,
+					result_st = ?,
+					result_desc = ?,
+					previous_error = ?,
+					integral_error = ?,
+					last_tm = UNIX_TIMESTAMP(),
+					next_tm = UNIX_TIMESTAMP() + 300
+				WHERE keyword_id = ?
 				""";
 		
 		this.jdbcTemplate.update(updateQuery, new Object[]{
-				resultMessage.getNewBid(),
 				resultMessage.getCurrentRank(),
+				resultMessage.getNewBid(),
 				resultMessage.getResultSt(),
 				resultMessage.getResultDesc(),
 				resultMessage.getUpdatedPreviousError(),
