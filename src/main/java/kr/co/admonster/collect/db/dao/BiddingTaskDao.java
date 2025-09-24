@@ -1,10 +1,13 @@
 package kr.co.admonster.collect.db.dao;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import kr.co.admonster.common.constants.Constants;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
@@ -16,6 +19,8 @@ public class BiddingTaskDao {
 	public BiddingTaskDao(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 	}
+	
+	private final AtomicLong lastTm = new AtomicLong(0);
 	
 	public void updateResult(Map<String, Object> props) {
 		String query = """
@@ -32,15 +37,21 @@ public class BiddingTaskDao {
 				WHERE keyword_id = :keywordId
 				""";
 		
-		log.debug("Executing updateResult query: {}", query);
-		log.debug("Parameters={}", props);
+		long now = System.currentTimeMillis();
+		if (now - this.lastTm.get() > Constants.MILLISECOND_FOR_HOUR) {
+			log.info("Query: {}", query);
+			log.info("Parameters: {}", props.entrySet().stream()
+					.map(e -> e.getKey() + "=" + e.getValue())
+					.collect(Collectors.joining(", ")));
+			this.lastTm.set(now);
+		}
 		
 		int updated = this.namedParameterJdbcTemplate.update(query, props);
 		
 		if (updated == 0) {
-			log.error("Failed to update bidding_task. keywordId={}", props.get("keywordId"));
+			log.error("Failed to update bidding_task. keyword_id={}", props.get("keyword_id"));
 		} else {
-			log.info("Successfully updated bidding_task. keywordId={}", props.get("keywordId"));
+			log.info("Updated bidding_task successfully. keyword_id={}, updatedRows={}", props.get("keyword_id"), updated);
 		}
 	}
 	

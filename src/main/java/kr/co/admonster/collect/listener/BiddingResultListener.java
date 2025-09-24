@@ -31,15 +31,16 @@ public class BiddingResultListener {
 		int partition = record.partition();
 		long offset = record.offset();
 		
-		log.info("Received message key={} partition={} offset={} value={}", key, partition, offset, value);
+		log.info("Received bidding_result message. key={} partition={} offset={}", key, partition, offset);
+		log.debug("Message value={}", value);
 		
 		try {
 			this.biddingResultService.apply(record.value());
 			ack.acknowledge();
 			
-			log.info("Successfully applied result keywordId={} offset={}", value.getKeywordId(), offset);
+			log.info("Applied bidding_result successfully. keyword_id={} offset={}", value.getKeywordId(), offset);
 		} catch (Exception e) {
-			 log.error("Failed to apply result key={} offset={}. Error={}", key, offset, e.getMessage(), e);
+			log.error("Failed to apply bidding_result. key={} offset={}", key, offset, e);
 		}
 	}
 	
