@@ -9,10 +9,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 		org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration.class
 })
 @EnableFeignClients
-public class AgentApplication {
+public class CollectApplication {
 	
 	public static void main(String[] args) {
-		SpringApplication.run(AgentApplication.class, args);
+		SpringApplication.run(CollectApplication.class, args);
 	}
 	
 }

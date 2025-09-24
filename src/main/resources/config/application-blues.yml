@@ -34,7 +34,7 @@ spring:
 
   datasource: ## main db
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://122.99.192.199:3306/am_devel?allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&useCursorFetch=true&useSSL=false
+    url: jdbc:mysql://localhost:3306/am_devel?allowPublicKeyRetrieval=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&useCursorFetch=true&useSSL=false
     username: bizspring
     password: gnirpszib
     hikari:
@@ -45,7 +45,7 @@ spring:
       max-lifetime: 1700000             # 커넥션의 최대 수명 (밀리초), DB wait_timeout보다 작게 설정 (약 28분)
       maximum-pool-size: 10             # 풀 최대 커넥션 수. 병렬 처리량에 따라 조정 (예: Batch 병렬 Step)
       minimum-idle: 5                   # 풀에서 유지할 최소 유휴 커넥션 수. 대기 없이 빠른 처리용
-      pool-name: am-dispatcher          # 커넥션 풀 식별용 이름 (로그나 모니터링 시 유용)
+      pool-name: am-collect             # 커넥션 풀 식별용 이름 (로그나 모니터링 시 유용)
 
   jackson:
     property-naming-strategy: SNAKE_CASE
@@ -57,22 +57,23 @@ spring:
       - localhost:9094
     client-id: am-client                # 클라이언트 식별자 (로깅 등 추적용)
     consumer:
-      group-id: am-group                # Kafka consumer group ID
-      auto-offset-reset: latest         # 처음부터 읽기 (또는 latest)
-      enable-auto-commit: false         # 수동 커밋 권장
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest       # [earliest|latest]
+      enable-auto-commit: false         # 수동 커밋 권장
+      group-id: am-group                # Kafka consumer group ID
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       acks: all                         # all: 리더 + 팔로워 모두 ack
-      retries: 3                        # 전송 실패 시 재시도 횟수
       batch-size: 16384                 # 배치 전송 크기 (바이트)
-      linger-ms: 1                      # 지정 시간(ms) 내 대기 후 배치 전송
       buffer-memory: 33554432           # 버퍼 메모리 (바이트)
+      linger-ms: 1                      # 지정 시간(ms) 내 대기 후 배치 전송
+      retries: 3                        # 전송 실패 시 재시도 횟수
     listener:
-      concurrency: 3                    # Consumer 동시 실행 수
       ack-mode: manual                  # 수동 ack (manual 또는 manual_immediate)
+      concurrency: 3                    # Consumer 동시 실행 수
+      enabled: true
     properties:
       security.protocol: PLAINTEXT      # SASL/SSL 등 보안 설정 가능
 

@@ -25,12 +25,21 @@ public class BiddingResultListener {
 			groupId = "am-collect",
 			containerFactory = "kafkaListenerContainerFactory")
 	public void onMessage(ConsumerRecord<String, BiddingResultMessage> record, Acknowledgment ack) {
-		log.info("Collect message: {}", record.value());
+		String key = record.key();
+		BiddingResultMessage value = record.value();
+		
+		int partition = record.partition();
+		long offset = record.offset();
+		
+		log.info("Received message key={} partition={} offset={} value={}", key, partition, offset, value);
+		
 		try {
-			this.biddingResultService.save(record.value());
+			this.biddingResultService.apply(record.value());
 			ack.acknowledge();
+			
+			log.info("Successfully applied result keywordId={} offset={}", value.getKeywordId(), offset);
 		} catch (Exception e) {
-			log.error("Failed to process task {}. {}", record.value(), e.getMessage(), e);
+			 log.error("Failed to apply result key={} offset={}. Error={}", key, offset, e.getMessage(), e);
 		}
 	}
 	
