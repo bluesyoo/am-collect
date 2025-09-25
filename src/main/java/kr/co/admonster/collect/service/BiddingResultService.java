@@ -64,6 +64,7 @@ public class BiddingResultService {
 					.resultSt(resultMessage.getResultSt())
 					.resultDesc(resultMessage.getResultDesc())
 					
+					.compatitors(resultMessage.getCompetitorRanks())
 					.timestamps(resultMessage.getTimestamps())
 					
 					.accountNo(resultMessage.getAccountNo())

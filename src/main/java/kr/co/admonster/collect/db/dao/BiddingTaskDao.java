@@ -24,7 +24,8 @@ public class BiddingTaskDao {
 	
 	public void updateResult(Map<String, Object> props) {
 		String query = """
-				UPDATE tb_bidding_task
+				UPDATE
+					tb_bidding_task
 				SET
 					viewed_rank = :viewedRank,
 					current_bid = :currentBid,
@@ -34,7 +35,8 @@ public class BiddingTaskDao {
 					integral_error = :integralError,
 					last_tm = UNIX_TIMESTAMP(),
 					next_tm = UNIX_TIMESTAMP() + 300
-				WHERE keyword_id = :keywordId
+				WHERE
+					keyword_id = :keywordId
 				""";
 		
 		long now = System.currentTimeMillis();

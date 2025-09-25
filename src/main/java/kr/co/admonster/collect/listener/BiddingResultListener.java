@@ -32,7 +32,7 @@ public class BiddingResultListener {
 		long offset = record.offset();
 		
 		log.info("Received bidding_result message. key={} partition={} offset={}", key, partition, offset);
-		log.debug("Message value={}", value);
+		log.info("Message value={}", value);
 		
 		try {
 			this.biddingResultService.apply(record.value());
