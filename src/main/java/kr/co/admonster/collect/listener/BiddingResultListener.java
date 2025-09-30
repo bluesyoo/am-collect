@@ -6,6 +6,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import kr.co.admonster.collect.service.BiddingResultService;
+import kr.co.admonster.common.constants.Constants;
 import kr.co.admonster.kafka.domain.BiddingResultMessage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +23,6 @@ public class BiddingResultListener {
 	@KafkaListener(
 			id = "bidding-result-listener",
 			topics = "#{@kafkaTopicProvider.BIDDING_RESULT}",
-			groupId = "am-collect",
 			containerFactory = "kafkaListenerContainerFactory")
 	public void onMessage(ConsumerRecord<String, BiddingResultMessage> record, Acknowledgment ack) {
 		String key = record.key();
@@ -31,7 +31,7 @@ public class BiddingResultListener {
 		int partition = record.partition();
 		long offset = record.offset();
 		
-		log.info("Received bidding_result message. key={} partition={} offset={}", key, partition, offset);
+		log.info("Received bidding_result message. key={} partition={} offset={} @{}", key, partition, offset, Constants.FMT_DATETIME.format(value.getTimestamp()));
 		log.info("Message value={}", value);
 		
 		try {
